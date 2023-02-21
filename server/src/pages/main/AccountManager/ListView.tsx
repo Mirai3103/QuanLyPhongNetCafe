@@ -1,14 +1,10 @@
 import {
-    Box,
     Flex,
     Input,
     InputGroup,
     InputLeftElement,
     Tab,
-    TableColumnHeaderProps,
     TabList,
-    TabPanel,
-    TabPanels,
     Tabs,
     Text,
     IconButton,
@@ -22,15 +18,9 @@ import {
     TagLabel,
 } from "@chakra-ui/react";
 import React from "react";
-import { AsyncCreatableSelect, AsyncSelect, CreatableSelect, Select, SingleValue } from "chakra-react-select";
-import { Icon, Stack } from "@fluentui/react";
-//search icon from react-icons
 import { AiOutlineSearch, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
-//BsFillChatDotsFill
 import { BsThreeDotsVertical } from "react-icons/bs";
-//BiDetail
 import { BiDetail } from "react-icons/bi";
-//MdOutlineMonetizationOn
 import { MdOutlineMonetizationOn } from "react-icons/md";
 import DataTable from "../../../components/dataview/DataTable";
 import { IAccount } from "../../../../electron/models/Account";
@@ -88,7 +78,7 @@ const convertAccountToRowProps = (account: IAccount): TableCellProps[] => {
     });
     result.push({
         key: 1,
-        children: account.username,
+        children: <Text fontWeight={"semibold"}>{account.username}</Text>,
         fontSize: "md",
     });
     result.push({

@@ -1,20 +1,28 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
+import dotenv from "dotenv";
+
+dotenv.config({
+    path: "E:/DoAnKi2Nam2/client/.env",
+});
+import "./socket";
+
 process.env.DIST_ELECTRON = join(__dirname, "../");
 process.env.DIST = join(process.env.DIST_ELECTRON, "../dist");
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL ? join(process.env.DIST_ELECTRON, "../public") : process.env.DIST;
-// Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
-// Set application name for Windows 10+ notifications
 if (process.platform === "win32") app.setAppUserModelId(app.getName());
-if (!app.requestSingleInstanceLock()) {
-    app.quit();
-    process.exit(0);
-}
+// if (!app.requestSingleInstanceLock()) {
+//     console.log("Another instance is running, quitting...");
+//     app.quit();
+//     process.exit(0);
+// }
+
 let win: BrowserWindow | null = null;
 const preload = join(__dirname, "../preload/index.js");
 const url = process.env.VITE_DEV_SERVER_URL;
+console.log(url);
 const indexHtml = join(process.env.DIST, "index.html");
 async function createWindow() {
     win = new BrowserWindow({
@@ -22,9 +30,6 @@ async function createWindow() {
         icon: join(process.env.PUBLIC, "favicon.ico"),
         webPreferences: {
             preload,
-            // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-            // Consider using contextBridge.exposeInMainWorld
-            // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
             nodeIntegration: true,
             contextIsolation: false,
         },
@@ -33,7 +38,7 @@ async function createWindow() {
     });
     if (process.env.VITE_DEV_SERVER_URL) {
         // electron-vite-vue#298
-        win.loadURL(url);
+        win.loadURL(url + "/login");
         // Open devTool if the app is not packaged
         win.webContents.openDevTools();
     } else {
@@ -69,10 +74,6 @@ app.on("activate", () => {
         createWindow();
     }
 });
-app.on("ready", () => {
-    // send hello message to renderer
-});
-
 // New window example arg: new windows url
 ipcMain.handle("open-win", (_, arg) => {
     const childWindow = new BrowserWindow({
@@ -89,11 +90,3 @@ ipcMain.handle("open-win", (_, arg) => {
         childWindow.loadFile(indexHtml, { hash: arg });
     }
 });
-// handle message from renderer
-ipcMain.on("message", (_, arg) => {
-    console.log("main process", arg);
-    //close current window and open new window
-    win?.close();
-    createWindow();
-});
-console.log("main process");

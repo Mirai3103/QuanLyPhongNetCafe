@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { initDatabase } from "../models/db/index";
 import "./server";
 import { getWin, setWin } from "../utils/constant";
+import "./server";
 import "../controllers";
 process.env.DIST_ELECTRON = join(__dirname, "../");
 process.env.DIST = join(process.env.DIST_ELECTRON, "../dist");
