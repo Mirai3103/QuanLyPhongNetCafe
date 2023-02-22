@@ -1,5 +1,4 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
-import { release } from "node:os";
 import { join } from "node:path";
 import dotenv from "dotenv";
 
@@ -11,7 +10,7 @@ import "./socket";
 process.env.DIST_ELECTRON = join(__dirname, "../");
 process.env.DIST = join(process.env.DIST_ELECTRON, "../dist");
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL ? join(process.env.DIST_ELECTRON, "../public") : process.env.DIST;
-if (release().startsWith("6.1")) app.disableHardwareAcceleration();
+// if (release().startsWith("6.1")) app.disableHardwareAcceleration();
 if (process.platform === "win32") app.setAppUserModelId(app.getName());
 // if (!app.requestSingleInstanceLock()) {
 //     console.log("Another instance is running, quitting...");
@@ -19,13 +18,13 @@ if (process.platform === "win32") app.setAppUserModelId(app.getName());
 //     process.exit(0);
 // }
 
-let win: BrowserWindow | null = null;
+global.win = null;
 const preload = join(__dirname, "../preload/index.js");
 const url = process.env.VITE_DEV_SERVER_URL;
 console.log(url);
 const indexHtml = join(process.env.DIST, "index.html");
 async function createWindow() {
-    win = new BrowserWindow({
+    global.win = new BrowserWindow({
         title: "Main window",
         icon: join(process.env.PUBLIC, "favicon.ico"),
         webPreferences: {
@@ -37,33 +36,65 @@ async function createWindow() {
         autoHideMenuBar: true,
     });
     if (process.env.VITE_DEV_SERVER_URL) {
-        // electron-vite-vue#298
-        win.loadURL(url + "/login");
-        // Open devTool if the app is not packaged
-        win.webContents.openDevTools();
+        global.win.loadURL(url + "/login");
+        global.win.webContents.openDevTools();
     } else {
-        win.loadFile(indexHtml);
+        global.win.loadFile(indexHtml);
     }
-    win.webContents.on("did-finish-load", () => {
-        win?.webContents.send("main-process-message", new Date().toLocaleString());
+    global.win.webContents.on("did-finish-load", () => {
+        global.win?.webContents.send("main-process-message", new Date().toLocaleString());
     });
-    win.webContents.setWindowOpenHandler(({ url }) => {
+    global.win.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith("https:")) shell.openExternal(url);
         return { action: "deny" };
     });
 }
 
-app.whenReady().then(createWindow);
+async function createMainWindow() {
+    global.win = new BrowserWindow({
+        title: "Main window",
+        icon: join(process.env.PUBLIC, "favicon.ico"),
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        fullscreen: false,
+        autoHideMenuBar: true,
+        resizable: false,
+        width: 300,
+        height: 670,
+        titleBarStyle: "hidden",
+    });
+    // location to top right
+    const screenWidth = global.win.getBounds().width;
+    const { width } = require("electron").screen.getPrimaryDisplay().workAreaSize;
+    global.win.setPosition(width - screenWidth, 0);
+    if (process.env.VITE_DEV_SERVER_URL) {
+        global.win.loadURL(url + "/main");
+        global.win.webContents.openDevTools();
+    } else {
+        global.win.loadFile(indexHtml);
+    }
+    global.win.webContents.on("did-finish-load", () => {
+        global.win?.webContents.send("main-process-message", new Date().toLocaleString());
+    });
+    global.win.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith("https:")) shell.openExternal(url);
+        return { action: "deny" };
+    });
+}
+
+app.whenReady().then(createMainWindow);
 
 app.on("window-all-closed", () => {
-    win = null;
+    global.win = null;
     if (process.platform !== "darwin") app.quit();
 });
 
 app.on("second-instance", () => {
-    if (win) {
-        if (win.isMinimized()) win.restore();
-        win.focus();
+    if (global.win) {
+        if (global.win.isMinimized()) global.win.restore();
+        global.win.focus();
     }
 });
 app.on("activate", () => {
@@ -71,7 +102,7 @@ app.on("activate", () => {
     if (allWindows.length) {
         allWindows[0].focus();
     } else {
-        createWindow();
+        createMainWindow();
     }
 });
 // New window example arg: new windows url

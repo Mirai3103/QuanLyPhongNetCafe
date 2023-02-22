@@ -1,5 +1,6 @@
 import { Button, FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
 import React from "react";
+import { ipcRenderer } from "electron";
 
 interface IProps {}
 
@@ -7,6 +8,19 @@ export default function LoginPage({}: IProps) {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const toast = useToast();
+    const handleLogin = () => {
+        if (username === "" || password === "") {
+            toast({
+                title: `Vui lòng nhập đầy đủ thông tin`,
+                status: "error",
+                isClosable: true,
+                position: "top",
+                duration: 5000,
+            });
+            return;
+        }
+        ipcRenderer.invoke("login", { username, password });
+    };
 
     React.useEffect(() => {
         const handleError = (_: any, arg: any) => {
@@ -20,15 +34,21 @@ export default function LoginPage({}: IProps) {
         };
         const handleLoginSuccess = (_: any, arg: any) => {
             toast({
-                title: `${arg} `,
+                title: `Đăng nhập thành công `,
                 status: "success",
                 isClosable: true,
                 position: "top",
                 duration: 5000,
             });
+            console.log(arg);
         };
+        ipcRenderer.on("error", handleError);
+        ipcRenderer.on("login", handleLoginSuccess);
 
-        return () => {};
+        return () => {
+            ipcRenderer.removeListener("error", handleError);
+            ipcRenderer.removeListener("login", handleLoginSuccess);
+        };
     }, []);
     return (
         <div className="bg-[#FBFCFF] w-screen h-screen grid place-content-center place-items-center">
@@ -57,7 +77,7 @@ export default function LoginPage({}: IProps) {
                     />
                 </FormControl>
                 <div className="mt-5 flex justify-center">
-                    <Button colorScheme="purple" variant="solid">
+                    <Button colorScheme="purple" variant="solid" onClick={handleLogin}>
                         Đăng nhập
                     </Button>
                 </div>

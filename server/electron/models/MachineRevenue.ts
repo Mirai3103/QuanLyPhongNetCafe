@@ -16,6 +16,7 @@ import Machine from "./Machine";
 export enum PaymentType {
     PrePayment = "prePayment",
     PostPayment = "postPayment",
+    FromBalance = "fromBalance",
 }
 
 @Entity()

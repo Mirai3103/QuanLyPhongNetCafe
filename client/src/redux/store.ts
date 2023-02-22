@@ -1,7 +1,13 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
-
+import userSplice from "./userSplice";
 const store = configureStore({
-    reducer: {},
+    reducer: {
+        user: userSplice,
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });
 
 export default store;
