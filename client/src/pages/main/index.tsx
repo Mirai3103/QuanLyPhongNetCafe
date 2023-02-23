@@ -6,6 +6,7 @@ import { Box, Flex, Image } from "@chakra-ui/react";
 import SessionInfo from "./SessionInfo";
 import Features from "./Features";
 import Banner from "@/assets/supportbanner.png";
+import { ipcRenderer } from "electron";
 interface IProps {}
 
 export default function MainPage({}: IProps) {
@@ -19,28 +20,28 @@ export default function MainPage({}: IProps) {
         return () => clearInterval(interval);
     }, []);
     React.useEffect(() => {
-        // ipcRenderer.invoke("session-initial").then((data) => {
-        //     dispatch(setAll(data));
-        // });
-        dispatch(
-            setAll({
-                account: {
-                    id: -84,
-                    username: "rshale2b",
-                    password: "kYLntGe",
-                    role: "user",
-                    createdAt: new Date("2022-10-16T22:24:37.000Z"),
-                    balance: 67000,
-                },
-                totalTime: (67000 / 10000) * 60 * 60,
-                usedTime: 0,
-                remainingTime: (67000 / 10000) * 60 * 60,
-                usedCost: 0,
-                serviceCost: 0,
-                balance: 67000,
-                machinePrice: 10000,
-            })
-        );
+        ipcRenderer.invoke("session-initial").then((data) => {
+            dispatch(setAll(data));
+        });
+        // dispatch(
+        //     setAll({
+        //         account: {
+        //             id: -84,
+        //             username: "rshale2b",
+        //             password: "kYLntGe",
+        //             role: "user",
+        //             createdAt: new Date("2022-10-16T22:24:37.000Z"),
+        //             balance: 3000,
+        //         },
+        //         totalTime: (3000 / 10000) * 60 * 60,
+        //         usedTime: 0,
+        //         remainingTime: (3000 / 10000) * 60 * 60,
+        //         usedCost: 0,
+        //         serviceCost: 0,
+        //         balance: 3000,
+        //         machinePrice: 10000,
+        //     })
+        // );
     }, []);
     return (
         <Flex direction="column" w="full" h="full" bg="gray.100">

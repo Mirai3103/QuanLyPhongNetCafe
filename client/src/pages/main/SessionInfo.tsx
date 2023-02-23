@@ -2,6 +2,7 @@ import { Grid, Flex, GridItem, Input, styled, InputProps } from "@chakra-ui/reac
 import { useAppSelector } from "../../redux/hooks";
 import { selectUser } from "../../redux/userSplice";
 import { toTimeString, toMoneyString } from "../../../../server/src/utils/helper";
+import useTimeFormatWithAnimation from "../../hook/useTimeFormatWithAnimation";
 
 const StyledGridItem = styled(GridItem, {
     baseStyle: {
@@ -18,6 +19,9 @@ interface IProps {}
 
 export default function SessionInfo({}: IProps) {
     const state = useAppSelector(selectUser);
+    const timeFormat = useTimeFormatWithAnimation(state.usedTime);
+    console.log("timeFormat", timeFormat);
+
     return (
         <Grid bg="white" m="4" p={"4"} shadow="lg" borderRadius="md" templateColumns="repeat(5, 1fr)" gap={2}>
             <StyledGridItem colSpan={3}>Tổng thời gian:</StyledGridItem>
@@ -26,7 +30,7 @@ export default function SessionInfo({}: IProps) {
             </StyledGridItem>
             <StyledGridItem colSpan={3}> Thời gian sử dụng:</StyledGridItem>
             <StyledGridItem colSpan={2}>
-                <CustomedInput size={"sm"} value={toTimeString(state.usedTime)} />
+                <CustomedInput size={"sm"} value={timeFormat} />
             </StyledGridItem>
             <StyledGridItem colSpan={3}> Thời gian còn lại:</StyledGridItem>
             <StyledGridItem colSpan={2}>

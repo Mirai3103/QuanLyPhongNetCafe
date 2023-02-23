@@ -13,10 +13,11 @@ export const toMoneyString = (money: number) => {
     return (money + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 };
 
-export const toTimeString = (time: number) => {
+export const toTimeString = (time: number, withColon = true) => {
     // seconds
     // format: hh:mm
     const hour = ("00" + Math.floor(time / 3600)).slice(-3);
     const minute = ("0" + (Math.floor(time / 60) % 60)).slice(-2);
-    return `${hour}:${minute}`;
+
+    return withColon ? `${hour}:${minute}` : `${hour} ${minute}`;
 };

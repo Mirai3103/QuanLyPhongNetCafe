@@ -12,7 +12,7 @@ class SessionService {
         });
     }
     public addSession(session: Session) {
-        AppDataSource.getRepository(Session).save(session);
+        AppDataSource.getRepository(Session).insert(session);
     }
     public async getSession(machineId: number) {
         return await AppDataSource.getRepository(Session).findOne({

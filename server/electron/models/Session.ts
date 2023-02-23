@@ -1,4 +1,4 @@
-import { Entity, OneToOne, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, OneToOne, PrimaryGeneratedColumn, Column, JoinColumn } from "typeorm";
 import Account from "./Account";
 import Machine from "./Machine";
 import MachineRevenue, { PaymentType } from "./MachineRevenue";
@@ -7,25 +7,53 @@ import MachineRevenue, { PaymentType } from "./MachineRevenue";
 export default class Session {
     @PrimaryGeneratedColumn()
     id: number;
+    @Column({
+        nullable: true,
+        type: "int",
+    })
+    accountId?: number;
     @OneToOne((type) => Account, (account) => account.session, {
         cascade: true,
     })
+    @JoinColumn({ name: "accountId" })
     account?: Account;
-    @Column()
+    @Column({
+        nullable: true,
+        type: "int",
+    })
     totalTime?: number;
-    @Column()
+    @Column({
+        type: "int",
+    })
     usedTime: number;
-    @Column()
+    @Column({
+        type: "int",
+    })
     usedCost: number;
-    @Column()
+    @Column({
+        type: "int",
+    })
     serviceCost: number;
+    @Column({
+        type: "int",
+    })
+    machineId: number;
+
     @OneToOne((type) => Machine, (machine) => machine.session)
+    @JoinColumn({ name: "machineId" })
     machine: Machine;
-    @Column()
+    @Column({
+        type: "datetime",
+    })
     expectedEndTime: Date;
-    @Column()
+    @Column({
+        type: "datetime",
+    })
     startTime: Date = new Date();
-    @Column()
+    @Column({
+        nullable: true,
+        type: "int",
+    })
     prePayment?: number;
 
     public getRemaningTime() {

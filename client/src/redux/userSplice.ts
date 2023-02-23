@@ -56,13 +56,14 @@ export const userSlice = createSlice({
             state.usedTime += gapTimeInSecond;
             state.balance = state.balance - (gapTimeInSecond / 60 / 60) * state.machinePrice;
             state.remainingTime = state.totalTime - state.usedTime;
-            // if (state.remainingTime <= 0) {
-            //     //toDo: logout
-            //     ipcRenderer.invoke("time-up", {
-            //         machineId: process.env.MACHINE_ID,
-            //         account: state.account,
-            //     });
-            // }
+            if (state.remainingTime <= 0) {
+                //toDo: logout
+                ipcRenderer.invoke("time-up", {
+                    machineId: process.env.MACHINE_ID,
+                    account: state.account,
+                });
+                ipcRenderer.invoke("open-login-window");
+            }
             // ipcRenderer.invoke("sync-time", {
             //     usedTime: state.usedTime,
             // });

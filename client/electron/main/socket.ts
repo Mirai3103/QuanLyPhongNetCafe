@@ -1,6 +1,7 @@
 import io from "socket.io-client";
 import dotenv from "dotenv";
 import { ipcMain, BrowserWindow } from "electron";
+import { createMainWindow } from "./initialWindow";
 dotenv.config({
     path: "E:/DoAnKi2Nam2/client/.env",
 });
@@ -42,7 +43,6 @@ ipcMain.handle("session-initial", (event, arg) => {
     return state;
 });
 ipcMain.handle("login", (event, arg) => {
-    console.log("login");
     socket.emit("login", arg);
 });
 socket.on("login-success", (data) => {
@@ -50,7 +50,9 @@ socket.on("login-success", (data) => {
     state = {
         ...data,
     };
-    global.win?.webContents.send("login", data);
+    //close all window
+    BrowserWindow.getAllWindows().forEach((win) => win.close());
+    createMainWindow();
 });
 
 socket.on("error", (data) => {
@@ -62,4 +64,11 @@ ipcMain.on("sync-time", (e, args) => {
         ...args,
     };
     socket.emit("sync-time", state);
+});
+
+// time-up
+ipcMain.on("time-up", (e, args) => {
+    socket.emit("time-up");
+    state = null;
+    // emit to main process
 });

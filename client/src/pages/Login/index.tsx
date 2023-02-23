@@ -40,7 +40,6 @@ export default function LoginPage({}: IProps) {
                 position: "top",
                 duration: 5000,
             });
-            console.log(arg);
         };
         ipcRenderer.on("error", handleError);
         ipcRenderer.on("login", handleLoginSuccess);

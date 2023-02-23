@@ -39,7 +39,6 @@ class AccountController {
             setUser(em);
             win.close();
             createMainWindow();
-            console.log(getUser());
             return account;
         }
         win.webContents.send("error", "Tài khoản không có quyền truy cập");

@@ -6,13 +6,14 @@ import MachineRevenue from "../MachineRevenue";
 import Product from "../Product";
 import Receipt from "../Receipt";
 import ReceiptDetail from "../ReceiptDetail";
+import Session from "../Session";
 import fs from "fs";
 export const AppDataSource = new DataSource({
     type: "sqlite",
     database: "E:\\DoAnKi2Nam2\\server\\test.db",
     synchronize: true,
-    logging: false,
-    entities: [Account, Employee, Machine, MachineRevenue, Product, Receipt, ReceiptDetail],
+    logging: true,
+    entities: [Account, Employee, Machine, MachineRevenue, Product, Receipt, ReceiptDetail, Session],
     // remove
 });
 

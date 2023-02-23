@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { AppDataSource } from "../models/db";
-import Machine from "../models/Machine";
+import Machine, { Status } from "../models/Machine";
 import accountService from "./AccountService";
 import MachineRevenue, { PaymentType } from "./../models/MachineRevenue";
 import { IAccount, Role } from "../models/Account";
@@ -22,7 +22,6 @@ class RealtimeService {
         socket.on("disconnect", () => {
             console.log("user disconnected");
         });
-        console.log(RealtimeService.emitLogin);
         socket.on("login", (data) => {
             RealtimeService.emitLogin(socket, data);
         });
@@ -54,6 +53,7 @@ class RealtimeService {
             session.usedTime = 0;
             session.totalTime = totalTime;
             session.prePayment = undefined;
+
             sessionService.addSession(session);
             socket.emit("login-success", {
                 account,
@@ -62,6 +62,7 @@ class RealtimeService {
                 usedCost: session.usedCost,
                 serviceCost: session.serviceCost,
                 machinePrice: machine.price,
+                balance: account.balance,
             });
         } else {
             socket.emit("error", "Sai tên đăng nhập hoặc mật khẩu");
