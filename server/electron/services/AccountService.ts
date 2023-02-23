@@ -20,6 +20,9 @@ class AccountService {
         await AppDataSource.getRepository(Account).save(account);
         return account;
     }
+    async updateAccount(account: Account) {
+        await AppDataSource.getRepository(Account).save(account);
+    }
     async recharge(username: string, amount: number) {
         const account = await AppDataSource.getRepository(Account).findOne({
             where: {

@@ -46,7 +46,6 @@ ipcMain.handle("login", (event, arg) => {
     socket.emit("login", arg);
 });
 socket.on("login-success", (data) => {
-    console.log("login", data);
     (global.win as BrowserWindow).title = data.account?.username || "User";
     state = {
         ...data,
@@ -56,4 +55,11 @@ socket.on("login-success", (data) => {
 
 socket.on("error", (data) => {
     global.win?.webContents.send("error", data);
+});
+
+ipcMain.on("sync-time", (e, args) => {
+    state = {
+        ...args,
+    };
+    socket.emit("sync-time", state);
 });

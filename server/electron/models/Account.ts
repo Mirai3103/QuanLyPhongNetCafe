@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import MachineRevenue from "./MachineRevenue";
 import Employee from "./Employee";
+import Session from "./Session";
 export enum Role {
     Admin = "admin",
     Manager = "manager",
@@ -56,6 +57,8 @@ export default class Account {
         default: 0,
     })
     balance: number;
+    @OneToOne(() => Session, (session) => session.account)
+    session?: Session;
 }
 
 export type IAccount = {

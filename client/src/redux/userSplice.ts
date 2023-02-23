@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { ipcRenderer } from "electron";
 interface IAccount {
     id: number;
     username: string;
@@ -39,19 +40,37 @@ export const userSlice = createSlice({
             state.account = action.payload;
         },
         setAll: (state, action: PayloadAction<UserState>) => {
-            state.account = action.payload.account;
-            state.totalTime = action.payload.totalTime;
-            state.usedTime = action.payload.usedTime;
-            state.remainingTime = action.payload.remainingTime;
-            state.usedCost = action.payload.usedCost;
-            state.serviceCost = action.payload.serviceCost;
-            state.balance = action.payload.balance;
-            state.machinePrice = action.payload.machinePrice;
+            for (const key in action.payload) {
+                (state as any)[key] = (action.payload as any)[key];
+            }
+            if (state.account) {
+                state.account.balance = action.payload.balance;
+                state.balance = action.payload.balance;
+            }
+        },
+        increaseUsedTime: (state) => {
+            const gapTimeInSecond = 60;
+            if (state.account) {
+                state.account.balance = state.account.balance - (gapTimeInSecond / 60 / 60) * state.machinePrice;
+            }
+            state.usedTime += gapTimeInSecond;
+            state.balance = state.balance - (gapTimeInSecond / 60 / 60) * state.machinePrice;
+            state.remainingTime = state.totalTime - state.usedTime;
+            // if (state.remainingTime <= 0) {
+            //     //toDo: logout
+            //     ipcRenderer.invoke("time-up", {
+            //         machineId: process.env.MACHINE_ID,
+            //         account: state.account,
+            //     });
+            // }
+            // ipcRenderer.invoke("sync-time", {
+            //     usedTime: state.usedTime,
+            // });
         },
     },
 });
 
-export const { setAccount, setAll } = userSlice.actions;
+export const { setAccount, setAll, increaseUsedTime } = userSlice.actions;
 
 export default userSlice.reducer;
 

@@ -10,5 +10,13 @@ export const toVietnameseDatetime = (date: Date) => {
     return `${hour}:${minute}:${second} -  ${day}/${month}/${year}`;
 };
 export const toMoneyString = (money: number) => {
-    return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return (money + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+};
+
+export const toTimeString = (time: number) => {
+    // seconds
+    // format: hh:mm
+    const hour = ("00" + Math.floor(time / 3600)).slice(-3);
+    const minute = ("0" + (Math.floor(time / 60) % 60)).slice(-2);
+    return `${hour}:${minute}`;
 };

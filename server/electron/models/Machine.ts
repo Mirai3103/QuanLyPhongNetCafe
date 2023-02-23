@@ -6,8 +6,10 @@ import {
     DeleteDateColumn,
     UpdateDateColumn,
     OneToMany,
+    OneToOne,
 } from "typeorm";
 import MachineRevenue from "./MachineRevenue";
+import Session from "./Session";
 export enum MachineType {
     Vip = "vip",
     Normal = "normal",
@@ -55,4 +57,6 @@ export default class Machine {
     updatedAt: Date;
     @OneToMany(() => MachineRevenue, (machineRevenue) => machineRevenue.machine)
     machineRevenues: MachineRevenue[];
+    @OneToOne(() => Session, (session) => session.machine)
+    session: Session;
 }

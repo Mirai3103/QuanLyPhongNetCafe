@@ -1,5 +1,5 @@
 import React from "react";
-import { setAll, selectUser } from "@/redux/userSplice";
+import { setAll, selectAccount, increaseUsedTime } from "@/redux/userSplice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Header from "./Header";
 import { Box, Flex, Image } from "@chakra-ui/react";
@@ -10,7 +10,14 @@ interface IProps {}
 
 export default function MainPage({}: IProps) {
     const dispatch = useAppDispatch();
-    const userState = useAppSelector(selectUser);
+    const account = useAppSelector(selectAccount);
+    React.useEffect(() => {
+        //one minute
+        const interval = setInterval(() => {
+            dispatch(increaseUsedTime());
+        }, 60000);
+        return () => clearInterval(interval);
+    }, []);
     React.useEffect(() => {
         // ipcRenderer.invoke("session-initial").then((data) => {
         //     dispatch(setAll(data));
@@ -25,9 +32,9 @@ export default function MainPage({}: IProps) {
                     createdAt: new Date("2022-10-16T22:24:37.000Z"),
                     balance: 67000,
                 },
-                totalTime: 402,
+                totalTime: (67000 / 10000) * 60 * 60,
                 usedTime: 0,
-                remainingTime: 402,
+                remainingTime: (67000 / 10000) * 60 * 60,
                 usedCost: 0,
                 serviceCost: 0,
                 balance: 67000,
@@ -35,10 +42,9 @@ export default function MainPage({}: IProps) {
             })
         );
     }, []);
-    console.log(userState);
     return (
         <Flex direction="column" w="full" h="full" bg="gray.100">
-            <Header username={userState.account?.username} />
+            <Header username={account?.username} />
             <SessionInfo />
             <Features />
             <Box w={"full"} px="4" mt={"4"}>
