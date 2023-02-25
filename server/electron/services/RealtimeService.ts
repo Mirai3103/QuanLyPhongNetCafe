@@ -34,6 +34,11 @@ class RealtimeService {
     }
     static async emitLogin(socket: Socket, data: { username: string; password: string }) {
         const account = await accountService.login(data.username, data.password);
+        const session = await sessionService.getSessionByAccountId(account.id);
+        if (session) {
+            socket.emit("error", "Tài khoản đang được sử dụng");
+            return;
+        }
         if (account) {
             if (account.balance === 0) {
                 socket.emit("error", "Tài khoản không đủ tiền");
@@ -68,9 +73,11 @@ class RealtimeService {
             socket.emit("error", "Sai tên đăng nhập hoặc mật khẩu");
         }
     }
-    static async onsyncTime(socket: Socket, usedTime: number) {
+    static async onsyncTime(socket: Socket, { usedTime }: any) {
+        console.log("sync-time", usedTime);
         const machineId = (socket as any).machineId;
         const session = await sessionService.getSessionByMachineId(machineId)!;
+        console.log(session);
         if (session.account && session.account.role === Role.User) {
             const gap = usedTime - session.usedTime;
             const machinePrice = session.machine!.price;
@@ -79,10 +86,11 @@ class RealtimeService {
             await accountService.updateAccount(session.account);
         }
         session.usedTime = usedTime;
-        sessionService.updateSession(session.id, session);
+        await sessionService.updateSession(session.id, session);
     }
     //time-up
     static async onTimeUp(socket: Socket) {
+        console.log("time-up");
         const machineId = (socket as any).machineId;
         sessionService.endSession(machineId);
     }

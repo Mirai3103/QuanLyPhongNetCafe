@@ -7,6 +7,8 @@ import {
     UpdateDateColumn,
     OneToMany,
     OneToOne,
+    BeforeUpdate,
+    BeforeInsert,
 } from "typeorm";
 import MachineRevenue from "./MachineRevenue";
 import Employee from "./Employee";
@@ -59,6 +61,13 @@ export default class Account {
     balance: number;
     @OneToOne(() => Session, (session) => session.account)
     session?: Session;
+    @BeforeUpdate()
+    @BeforeInsert()
+    checkBalance() {
+        if (this.balance < 0) {
+            this.balance = 0;
+        }
+    }
 }
 
 export type IAccount = {

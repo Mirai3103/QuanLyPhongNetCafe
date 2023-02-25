@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
     type: "sqlite",
     database: "E:\\DoAnKi2Nam2\\server\\test.db",
     synchronize: true,
-    logging: true,
+    logging: false,
     entities: [Account, Employee, Machine, MachineRevenue, Product, Receipt, ReceiptDetail, Session],
     // remove
 });

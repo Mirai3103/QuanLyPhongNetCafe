@@ -59,7 +59,7 @@ socket.on("error", (data) => {
     global.win?.webContents.send("error", data);
 });
 
-ipcMain.on("sync-time", (e, args) => {
+ipcMain.handle("sync-time", (e, args) => {
     state = {
         ...args,
     };
@@ -67,8 +67,10 @@ ipcMain.on("sync-time", (e, args) => {
 });
 
 // time-up
-ipcMain.on("time-up", (e, args) => {
+ipcMain.handle("time-up", (e, args) => {
+    console.log("time-up");
     socket.emit("time-up");
     state = null;
+    return true;
     // emit to main process
 });

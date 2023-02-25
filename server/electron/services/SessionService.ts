@@ -29,6 +29,7 @@ class SessionService {
             },
             relations: ["account", "machine"],
         });
+        console.log(session);
         if (!session) {
             return;
         }
@@ -37,8 +38,8 @@ class SessionService {
         await AppDataSource.getRepository(Session).delete(session.id);
     }
 
-    public updateSession(sessionId: number, session: Session) {
-        AppDataSource.getRepository(Session).update({ id: sessionId }, session);
+    public async updateSession(sessionId: number, session: Session) {
+        await AppDataSource.getRepository(Session).update({ id: sessionId }, session);
     }
     public async rechangeSession(machineId: number, amount: number) {
         const session = await this.getSession(machineId);
@@ -59,6 +60,14 @@ class SessionService {
         session.totalTime += amountTime;
         session.prePayment += amount;
         await AppDataSource.getRepository(Session).save(session);
+    }
+    public async getSessionByAccountId(accountId: number) {
+        return await AppDataSource.getRepository(Session).find({
+            where: {
+                account: { id: accountId },
+            },
+            relations: ["account", "machine"],
+        });
     }
 }
 

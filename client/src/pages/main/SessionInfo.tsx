@@ -20,7 +20,6 @@ interface IProps {}
 export default function SessionInfo({}: IProps) {
     const state = useAppSelector(selectUser);
     const timeFormat = useTimeFormatWithAnimation(state.usedTime);
-    console.log("timeFormat", timeFormat);
 
     return (
         <Grid bg="white" m="4" p={"4"} shadow="lg" borderRadius="md" templateColumns="repeat(5, 1fr)" gap={2}>

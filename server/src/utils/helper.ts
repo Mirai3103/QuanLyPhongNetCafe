@@ -10,13 +10,15 @@ export const toVietnameseDatetime = (date: Date) => {
     return `${hour}:${minute}:${second} -  ${day}/${month}/${year}`;
 };
 export const toMoneyString = (money: number) => {
-    return (money + "").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    const int = Math.floor(money);
+    const decimal = Math.floor((money - int) * 100);
+    return `${int.toLocaleString("vi-VN")}.${decimal}đ`;
 };
 
 export const toTimeString = (time: number, withColon = true) => {
     // seconds
     // format: hh:mm
-    const hour = ("00" + Math.floor(time / 3600)).slice(-3);
+    const hour = ("0" + Math.floor(time / 3600)).slice(-3);
     const minute = ("0" + (Math.floor(time / 60) % 60)).slice(-2);
 
     return withColon ? `${hour}:${minute}` : `${hour} ${minute}`;
