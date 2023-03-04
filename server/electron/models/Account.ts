@@ -13,6 +13,7 @@ import {
 import MachineRevenue from "./MachineRevenue";
 import Employee from "./Employee";
 import Session from "./Session";
+import Bill from "./Bill";
 export enum Role {
     Admin = "admin",
     Manager = "manager",
@@ -61,6 +62,8 @@ export default class Account {
     balance: number;
     @OneToOne(() => Session, (session) => session.account)
     session?: Session;
+    @OneToMany(() => Bill, (bill) => bill.account)
+    bills: Bill[];
     @BeforeUpdate()
     @BeforeInsert()
     checkBalance() {

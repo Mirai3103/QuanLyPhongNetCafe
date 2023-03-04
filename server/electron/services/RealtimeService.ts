@@ -73,6 +73,7 @@ class RealtimeService {
             socket.emit("error", "Sai tên đăng nhập hoặc mật khẩu");
         }
     }
+
     static async onsyncTime(socket: Socket, { usedTime }: any) {
         console.log("sync-time", usedTime);
         const machineId = (socket as any).machineId;
@@ -87,6 +88,9 @@ class RealtimeService {
         }
         session.usedTime = usedTime;
         await sessionService.updateSession(session.id, session);
+        socket.emit("sync-time-success", {
+            ...session,
+        });
     }
     //time-up
     static async onTimeUp(socket: Socket) {

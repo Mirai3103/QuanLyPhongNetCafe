@@ -76,3 +76,7 @@ export default class Session {
         return machineRevenue;
     }
 }
+
+export type ISession = {
+    [key in keyof Session]: Session[key] extends Function ? never : Session[key];
+};

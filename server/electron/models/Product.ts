@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import ReceiptDetail from "./ReceiptDetail";
 
-enum Type {
+export enum Type {
     Drink = "Nước uống",
     Food = "Thức ăn",
     Card = "Thẻ",
@@ -36,6 +36,17 @@ export default class Product {
         default: Type.Food,
     })
     type: Type;
+
+    @Column({
+        type: "text",
+        nullable: true,
+    })
+    imageBase64: string;
+    @Column({
+        type: "varchar",
+        length: 500,
+    })
+    description: string;
     @Column({
         type: "int",
         default: 0,
@@ -49,3 +60,8 @@ export default class Product {
     @OneToMany(() => ReceiptDetail, (receiptDetail) => receiptDetail.product)
     receiptDetails: ReceiptDetail[];
 }
+
+//only fields
+export type IProduct = {
+    [key in keyof Product]: Product[key] extends Function ? never : Product[key];
+};

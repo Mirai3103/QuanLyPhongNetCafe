@@ -1,3 +1,4 @@
+
 insert into account (id, username, password, role, createdAt, balance)
 values (
         -1,
@@ -898,3 +899,4 @@ values (
         '2022-04-04 10:40:38',
         47000
     );
+

@@ -1,11 +1,11 @@
 {
-  "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "rootDir": ".",
-  },
-  "include": ["vite.config.ts", "package.json", "electron", "../server/electron/main/server.ts"],
+    "compilerOptions": {
+        "composite": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "rootDir": "."
+    },
+    "include": ["vite.config.ts", "package.json", "electron"]
 }

@@ -17,6 +17,7 @@ server.listen(4444, () => {
 const io = new Server(server);
 
 io.use(async (socket, next) => {
+    socket.on;
     const handshakeData = socket.request;
     const machineId = (handshakeData as any)._query.machine_id;
     const MachineRespo = AppDataSource.getRepository(Machine);
@@ -32,3 +33,4 @@ io.use(async (socket, next) => {
 // handle error
 
 io.on("connection", realtimeService.onConnect);
+global.io = io;

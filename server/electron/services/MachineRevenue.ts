@@ -4,7 +4,7 @@ import Machine, { MachineType, Status } from "../models/Machine";
 import MachineRevenue, { PaymentType } from "../models/MachineRevenue";
 import { BrowserWindow, ipcMain } from "electron";
 
-export default class MachineService {
+ class MachineService {
     async getMachineRevenueList() {
         const machineRevenues = await AppDataSource.getRepository(MachineRevenue).find({
             relations: ["machine", "account"],

@@ -12,7 +12,7 @@ export const toVietnameseDatetime = (date: Date) => {
 export const toMoneyString = (money: number) => {
     const int = Math.floor(money);
     const decimal = Math.floor((money - int) * 100);
-    return `${int.toLocaleString("vi-VN")}.${decimal}đ`;
+    return `${int.toLocaleString("vi-VN")},${decimal}đ`;
 };
 
 export const toTimeString = (time: number, withColon = true) => {

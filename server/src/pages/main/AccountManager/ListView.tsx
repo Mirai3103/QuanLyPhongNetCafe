@@ -28,6 +28,7 @@ import { ipcRenderer } from "electron";
 import { AccountEvents } from "../../../services/type";
 import { useDebounce } from "usehooks-ts";
 import { toMoneyString, toVietnameseDatetime } from "@/utils/helper";
+import AccountAction from "./AccountAction";
 interface IProps {}
 const tabs = [
     {
@@ -53,22 +54,6 @@ const statusComponent = (status: string) => {
     );
 };
 
-const StyledMenuItem = (props: MenuItemProps) => {
-    return (
-        <MenuItem
-            as={Flex}
-            borderRadius="sm"
-            mx="2"
-            py={"2"}
-            w={"auto"}
-            columnGap="2"
-            justifyItems={"center"}
-            fontSize="lg"
-            {...props}
-        />
-    );
-};
-
 const convertAccountToRowProps = (account: IAccount): TableCellProps[] => {
     const result: TableCellProps[] = [];
     result.push({
@@ -83,14 +68,7 @@ const convertAccountToRowProps = (account: IAccount): TableCellProps[] => {
     });
     result.push({
         key: 2,
-        children: (
-            <>
-                {toMoneyString(account.balance)}
-                <Text display={"inline"} fontWeight={"semibold"}>
-                    đ
-                </Text>
-            </>
-        ),
+        children: <>{toMoneyString(account.balance)}</>,
         fontSize: "md",
     });
     result.push({
@@ -110,50 +88,29 @@ const convertAccountToRowProps = (account: IAccount): TableCellProps[] => {
     });
     result.push({
         key: 7,
-        children: (
-            <Flex columnGap="5" w={"full"} justifyContent="flex-end">
-                <Menu>
-                    <MenuButton
-                        as={IconButton}
-                        variant="ghost"
-                        colorScheme="cyan"
-                        color="black"
-                        aria-label="Delete"
-                        icon={<BsThreeDotsVertical className="text-lg" />}
-                    ></MenuButton>
-                    <MenuList>
-                        <StyledMenuItem>
-                            <AiOutlineEdit />
-                            Sửa thông tin
-                        </StyledMenuItem>
-                        <StyledMenuItem color={"red.500"}>
-                            <AiOutlineDelete />
-                            Xoá tài khoản
-                        </StyledMenuItem>
-                        <StyledMenuItem>
-                            <BiDetail />
-                            Chi tiết tài khoản
-                        </StyledMenuItem>
-                        <StyledMenuItem color={"green.500"}>
-                            <MdOutlineMonetizationOn />
-                            Nạp tiền
-                        </StyledMenuItem>
-                    </MenuList>
-                </Menu>
-            </Flex>
-        ),
+        children: <AccountAction id={account.id} />,
     });
     return result;
 };
 
 export default function ListView({}: IProps) {
     const [accounts, setAccounts] = React.useState<IAccount[] | undefined>(undefined);
-    const [sortOrder, setSortOrder] = React.useState<SortOrder>(SortOrder.ID_ASC);
 
     React.useEffect(() => {
         ipcRenderer.invoke(AccountEvents.GET_ALL).then((data) => {
             setAccounts(data);
         });
+    }, []);
+    React.useEffect(() => {
+        const onRefresh = () => {
+            ipcRenderer.invoke(AccountEvents.GET_ALL).then((data) => {
+                setAccounts(data);
+            });
+        };
+        window.addEventListener("refresh-account", onRefresh);
+        return () => {
+            window.removeEventListener("refresh-account", onRefresh);
+        };
     }, []);
     const [searchKeywords, setSearchKeywords] = React.useState("");
     const debouncedSearchKeywords = useDebounce(searchKeywords, 1000);
@@ -232,49 +189,3 @@ export default function ListView({}: IProps) {
         </div>
     );
 }
-
-enum SortOrder {
-    ID_ASC = "id_asc",
-    ID_DESC = "id_desc",
-    BALANCE_ASC = "balance_asc",
-    BALANCE_DESC = "balance_desc",
-    CREATED_AT_ASC = "created_at_asc",
-    CREATED_AT_DESC = "created_at_desc",
-    USERNAME_ASC = "username_asc",
-    USERNAME_DESC = "username_desc",
-}
-
-const sortOptions = [
-    {
-        value: SortOrder.ID_ASC,
-        label: "Id tăng dần",
-    },
-    {
-        value: SortOrder.ID_DESC,
-        label: "Id giảm dần",
-    },
-    {
-        value: SortOrder.BALANCE_ASC,
-        label: "Số dư tăng dần",
-    },
-    {
-        value: SortOrder.BALANCE_DESC,
-        label: "Số dư giảm dần",
-    },
-    {
-        value: SortOrder.CREATED_AT_ASC,
-        label: "Ngày tạo tăng dần",
-    },
-    {
-        value: SortOrder.CREATED_AT_DESC,
-        label: "Ngày tạo giảm dần",
-    },
-    {
-        value: SortOrder.USERNAME_ASC,
-        label: "Tên tài khoản tăng dần",
-    },
-    {
-        value: SortOrder.USERNAME_DESC,
-        label: "Tên tài khoản giảm dần",
-    },
-];

@@ -39,8 +39,9 @@ export const userSlice = createSlice({
         setAccount: (state, action: PayloadAction<IAccount>) => {
             state.account = action.payload;
         },
-        setAll: (state, action: PayloadAction<UserState>) => {
+        setAll: (state, action: PayloadAction<any>) => {
             for (const key in action.payload) {
+                if (action.payload[key] === undefined) continue;
                 (state as any)[key] = (action.payload as any)[key];
             }
             if (state.account) {
@@ -50,25 +51,10 @@ export const userSlice = createSlice({
         },
         increaseUsedTime: (state) => {
             const gapTimeInSecond = 60;
-            if (state.account) {
-                state.account.balance = state.account.balance - (gapTimeInSecond / 60 / 60) * state.machinePrice;
-            }
-            state.usedTime += gapTimeInSecond;
-            state.balance = state.balance - (gapTimeInSecond / 60 / 60) * state.machinePrice;
-            state.remainingTime = state.totalTime - state.usedTime;
+            const usedTime = state.usedTime + gapTimeInSecond;
             ipcRenderer.invoke("sync-time", {
-                usedTime: state.usedTime,
+                usedTime: usedTime,
             });
-            if (state.remainingTime <= 0) {
-                //toDo: logout
-                ipcRenderer
-                    .invoke("time-up", {
-                        machineId: process.env.MACHINE_ID,
-                    })
-                    .then(() => {
-                        ipcRenderer.invoke("open-login-window");
-                    });
-            }
         },
     },
 });
@@ -79,3 +65,5 @@ export default userSlice.reducer;
 
 export const selectAccount = (state: RootState) => state.user.account;
 export const selectUser = (state: RootState) => state.user;
+export const selectUsedTime = (state: RootState) => state.user.usedTime;
+export const selectRemainingTime = (state: RootState) => state.user.remainingTime;

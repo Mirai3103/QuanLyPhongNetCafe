@@ -6,8 +6,8 @@ import {
     DeleteDateColumn,
     UpdateDateColumn,
     ManyToOne,
-    PrimaryColumn,
-    JoinColumn,
+    BeforeInsert,
+    BeforeUpdate,
 } from "typeorm";
 
 import Account from "./Account";
@@ -23,13 +23,17 @@ export enum PaymentType {
 export default class MachineRevenue {
     @PrimaryGeneratedColumn()
     id: number;
-
-    //is Employee using this machine?
     @Column({
         type: "boolean",
         default: false,
     })
     isEmployeeUsing: boolean;
+    @Column({
+        type: "int",
+        default: 0,
+        unsigned: true,
+    })
+    total: number;
     @CreateDateColumn()
     startAt: Date;
     @UpdateDateColumn()
@@ -52,4 +56,12 @@ export default class MachineRevenue {
         default: PaymentType.PrePayment,
     })
     paymentType: PaymentType;
+    @BeforeInsert()
+    @BeforeUpdate()
+    calculateTotal() {
+        if (this.endAt) {
+            const hours = (this.endAt.getTime() - this.startAt.getTime()) / 1000 / 60 / 60;
+            this.total = hours * this.machine.price;
+        }
+    }
 }

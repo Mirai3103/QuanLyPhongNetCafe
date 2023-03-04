@@ -2,9 +2,11 @@ import React from "react";
 import { Button, Flex, Icon, Spacer, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import ListView from "./ListView";
+import { useNavigate } from "react-router-dom";
 interface IProps {}
 
 export default function AccountManager({}: IProps) {
+    const navigate = useNavigate();
     return (
         <Flex direction="column" rowGap="10" mt="3">
             <Flex justifyContent="space-between">
@@ -23,6 +25,7 @@ export default function AccountManager({}: IProps) {
                             />
                         }
                         variant="solid"
+                        onClick={() => navigate("/main/account-manager/create")}
                     >
                         Tạo tài khoản
                     </Button>

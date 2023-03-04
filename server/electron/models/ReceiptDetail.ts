@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
     OneToMany,
     PrimaryColumn,
+    JoinColumn,
 } from "typeorm";
 
 import Receipt from "./Receipt";
@@ -23,7 +24,7 @@ export default class ReceiptDetail {
         type: "int",
         nullable: false,
     })
-    foodId: number;
+    productId: number;
     @Column({
         type: "int",
         default: 0,
@@ -43,7 +44,18 @@ export default class ReceiptDetail {
     @UpdateDateColumn()
     updatedAt: Date;
     @OneToMany(() => Receipt, (receipt) => receipt.receiptDetails)
+    @JoinColumn({ name: "receiptId" })
     receipt: Receipt;
     @OneToMany(() => Product, (product) => product.receiptDetails)
+    @JoinColumn({ name: "productId" })
     product: Product;
 }
+
+export type IReceiptDetail = {
+    receipt?: Receipt;
+    product?: Product;
+    productId: number;
+    receiptId: number;
+    quantity: number;
+    price: number;
+};

@@ -1,11 +1,12 @@
 import accountService from "../services/AccountService";
+import sessionService from "../services/SessionService";
 import { BrowserWindow, ipcMain } from "electron";
-import { Role } from "../models/Account";
-import { getWin, setUser, getUser } from "../utils/constant";
+import { IAccount, Role } from "../models/Account";
 import employeeService from "../services/EmployeeService";
 import { createMainWindow } from "../main";
+import { getUser, setUser } from "../utils/constant";
 
-enum AccountEvents {
+export enum AccountEvents {
     LOGIN = "account:login",
     REGISTER = "account:register",
     RECHARGE = "account:recharge",
@@ -13,6 +14,9 @@ enum AccountEvents {
     GET_INFO = "account:getInfo",
     RESET_PASSWORD = "account:resetPassword",
     GET_ALL = "account:getAll",
+    GET_A_USER_DETAIL = "account:getAUserDetail",
+    DELETE_ACCOUNT = "account:deleteAccount",
+    UPDATE_ACCOUNT = "account:updateAccount",
 }
 
 class AccountController {
@@ -22,12 +26,35 @@ class AccountController {
         ipcMain.handle(AccountEvents.RECHARGE, this.recharge);
         ipcMain.handle(AccountEvents.GET_ALL, this.getAll);
         ipcMain.handle(AccountEvents.GET_INFO, this.getInfo);
+        ipcMain.handle(AccountEvents.GET_A_USER_DETAIL, this.getAUserDetail);
+        ipcMain.handle(AccountEvents.DELETE_ACCOUNT, this.deleteAccount);
+        ipcMain.handle(AccountEvents.UPDATE_ACCOUNT, this.updateAccountevent);
     }
-    destroy() {
-        ipcMain.removeHandler(AccountEvents.LOGIN);
+
+    async updateAccountevent(event: Electron.IpcMainInvokeEvent, account: IAccount) {
+        const isSuccess = await accountService.updateAccount(account);
+        const win = global.win as BrowserWindow;
+
+        if (!isSuccess) {
+            win.webContents.send("error", `Trùng tên tài khoản ${account.username}`);
+            return false;
+        }
+
+        win.webContents.send("success", ` Cập nhật tài khoản ${account.username} thành công`);
+        return true;
+    }
+    async deleteAccount(event: Electron.IpcMainInvokeEvent, arg: any) {
+        const win = global.win as BrowserWindow;
+        const account = await accountService.deleteAccount(arg.id);
+        if (account) {
+            win.webContents.send("success", "Xóa tài khoản thành công");
+            return account;
+        }
+        win.webContents.send("error", "Xóa tài khoản thất bại");
+        return false;
     }
     async login(event: Electron.IpcMainInvokeEvent, arg: any) {
-        const win = getWin();
+        const win = global.win as BrowserWindow;
         const account = await accountService.login(arg.username, arg.password);
         if (!account) {
             win.webContents.send("error", "Tên đăng nhập hoặc mật khẩu không đúng");
@@ -44,23 +71,25 @@ class AccountController {
         win.webContents.send("error", "Tài khoản không có quyền truy cập");
     }
     async register(event: Electron.IpcMainInvokeEvent, arg: any) {
-        const win = getWin();
+        const win = global.win as BrowserWindow;
         const account = await accountService.register(arg.username, arg.password, arg.balance);
         if (!account) {
-            win.webContents.send("error", "Tài khoản đã tồn tại");
+            win.webContents.send("error", "Tên đăng nhập đã tồn tại");
             return null;
         }
         win.webContents.send("success", "Đăng ký thành công");
         return account;
     }
     async recharge(event: Electron.IpcMainInvokeEvent, arg: any) {
-        const win = getWin();
-        const result = await accountService.recharge(arg.username, arg.amount);
+        const win = global.win as BrowserWindow;
+        console.log(arg);
+        const result = await accountService.recharge(arg.id, arg.money);
         if (!result) {
             win.webContents.send("error", "Tài khoản không tồn tại");
-            return null;
+            return false;
         }
-        win.webContents.send("success", "Nạp tiền thành công");
+        await sessionService.renewData(arg.id);
+
         return result;
     }
     async getAll(event: Electron.IpcMainInvokeEvent, arg: any) {
@@ -69,6 +98,10 @@ class AccountController {
     }
     async getInfo(event: Electron.IpcMainInvokeEvent, arg: any) {
         return getUser();
+    }
+    async getAUserDetail(event: Electron.IpcMainInvokeEvent, arg: any) {
+        const account = await accountService.getAccountByUsername(arg.id);
+        return account;
     }
 }
 export default new AccountController();

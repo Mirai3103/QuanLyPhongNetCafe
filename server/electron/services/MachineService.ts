@@ -2,11 +2,36 @@ import { AppDataSource } from "../models/db";
 import Account from "../models/Account";
 import Machine, { MachineType, Status } from "../models/Machine";
 import { BrowserWindow } from "electron";
+import SessionService from "./SessionService";
+import { IMachine } from "../models/Machine";
 
-export default class MachineService {
+class MachineService {
     async getMachineList() {
         const machines = await AppDataSource.getRepository(Machine).find();
         return machines;
+    }
+    async getMachineListWithStatus() {
+        const listConnectMachineId: number[] = [];
+        global.io.of("/").sockets.forEach((socket) => {
+            listConnectMachineId.push((socket as any).machineId);
+        });
+        const listSession = await SessionService.getAllSession();
+        const machines = await AppDataSource.getRepository(Machine).find();
+        const machineList: IMachine[] = machines.map((machine) => {
+            const session = listSession.find((session) => session.machine.id === machine.id);
+            if (session) {
+                machine.status = Status.Using;
+                (machine as any).account = session.account;
+            } else if (listConnectMachineId.find((id) => id === machine.id)) {
+                machine.status = Status.Locked;
+            } else {
+                machine.status = Status.Off;
+            }
+            return {
+                ...machine,
+            };
+        });
+        return machineList;
     }
     async getMachineById(id: number) {
         const machine = await AppDataSource.getRepository(Machine).findOne({
@@ -73,3 +98,4 @@ export default class MachineService {
         return false;
     }
 }
+export default new MachineService();

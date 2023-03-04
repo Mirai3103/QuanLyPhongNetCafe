@@ -1,7 +1,7 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { setUser } from "@/redux/userSplice";
 import { AccountEvents } from "@/services/type";
-import { Box, useColorModeValue, useDisclosure } from "@chakra-ui/react";
+import { Box, useColorModeValue, useDisclosure, useToast } from "@chakra-ui/react";
 import { ipcRenderer } from "electron";
 import React from "react";
 import { IconType } from "react-icons";
@@ -25,6 +25,8 @@ const LinkItems: Array<LinkItemProps> = [
             { name: "Quản lý nhân viên", icon: FiTrendingUp, url: "/main/employee" },
             { name: "Quản lý khách hàng", icon: FiTrendingUp, url: "/main/customer" },
             { name: "Quản lý tài khoản", icon: FiTrendingUp, url: "/main/account-manager" },
+            { name: "Quản lý máy", icon: FiTrendingUp, url: "/main/machine-manager" },
+            { name: "Quản lý sản phẩm", icon: FiTrendingUp, url: "/main/product-manager" },
         ],
     },
     { name: "Thống kê", icon: FiCompass },
@@ -33,7 +35,7 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 export default function MainLayout() {
     const dispatch = useAppDispatch();
-
+    const toast = useToast();
     React.useEffect(() => {
         ipcRenderer.invoke(AccountEvents.GET_INFO).then((u) => {
             if (u === null) {
@@ -44,7 +46,32 @@ export default function MainLayout() {
             dispatch(setUser(JSON.parse(JSON.stringify(u))));
         });
     }, []);
-
+    React.useEffect(() => {
+        const handleError = (_: any, arg: any) => {
+            toast({
+                title: `${arg} `,
+                status: "error",
+                isClosable: true,
+                position: "top",
+                duration: 5000,
+            });
+        };
+        const handleLoginSuccess = (_: any, arg: any) => {
+            toast({
+                title: `${arg} `,
+                status: "success",
+                isClosable: true,
+                position: "top",
+                duration: 5000,
+            });
+        };
+        ipcRenderer.on("error", handleError);
+        ipcRenderer.on("success", handleLoginSuccess);
+        return () => {
+            ipcRenderer.removeListener("error", handleError);
+            ipcRenderer.removeListener("success", handleLoginSuccess);
+        };
+    }, []);
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box

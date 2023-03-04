@@ -3,7 +3,6 @@ import { release } from "node:os";
 import { join } from "node:path";
 import { initDatabase } from "../models/db/index";
 import "./server";
-import { getWin, setWin } from "../utils/constant";
 import "./server";
 import "../controllers";
 process.env.DIST_ELECTRON = join(__dirname, "../");
@@ -39,7 +38,7 @@ async function createLoginWindow() {
         fullscreen: true,
         autoHideMenuBar: true,
     });
-    setWin(win);
+    global.win = win;
     if (process.env.VITE_DEV_SERVER_URL) {
         win.loadURL(url);
         win.webContents.openDevTools();
@@ -71,7 +70,7 @@ export async function createMainWindow() {
     });
     //open dev tools
     win.webContents.openDevTools();
-    setWin(win);
+    global.win = win;
     win.setSize(1300, 800);
     // set location center screen
     win.center();
@@ -86,12 +85,12 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-    setWin(null);
+    global.win = null;
     if (process.platform !== "darwin") app.quit();
 });
 
 app.on("second-instance", () => {
-    const win = getWin();
+    const win = global.win;
     if (win) {
         if (win.isMinimized()) win.restore();
         win.focus();
@@ -124,6 +123,6 @@ ipcMain.handle("open-win", (_, arg) => {
     }
 });
 ipcMain.handle("openLogin", () => {
-    getWin()?.close();
+    global.win?.close();
     createLoginWindow();
 });

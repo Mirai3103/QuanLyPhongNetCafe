@@ -65,6 +65,28 @@ ipcMain.handle("sync-time", (e, args) => {
     };
     socket.emit("sync-time", state);
 });
+socket.on("sync-time-success", (data) => {
+    global.win?.webContents.send("sync-time-success", data);
+    const newState = {
+        account: data.account
+            ? {
+                  ...data.account,
+              }
+            : undefined,
+        remainingTime: data.totalTime ? data.totalTime - data.usedTime : undefined,
+        usedTime: data.usedTime,
+        usedCost: data.usedCost,
+        totalTime: data.totalTime,
+        serviceCost: data.serviceCost,
+        machinePrice: undefined,
+        balance: undefined,
+    };
+    Object.keys(newState).forEach((key) => {
+        if (newState[key] !== undefined) {
+            (state as any)[key] = newState[key];
+        }
+    });
+});
 
 // time-up
 ipcMain.handle("time-up", (e, args) => {
