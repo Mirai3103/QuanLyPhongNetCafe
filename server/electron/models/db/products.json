@@ -28,7 +28,7 @@
     },
     {
         "name": "Mì tôm",
-        "price": 30000,
+        "price": 10000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Mì_tôm.jpg",
         "description": "Mì tôm",
@@ -37,7 +37,7 @@
     },
     {
         "name": "Mì tôm trứng",
-        "price": 30000,
+        "price": 20000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Mì_tôm_trứng.jpg",
         "description": "Mì tôm trứng",
@@ -46,7 +46,7 @@
     },
     {
         "name": "Cá viên chiên",
-        "price": 30000,
+        "price": 15000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Cá_viên_chiên.jpg",
         "description": "Cá viên chiên",
@@ -59,7 +59,7 @@
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Mì_xào_bò.jpg",
         "description": "Mì xào bò",
-        "stock": 20,
+        "stock": -1,
         "createdAt": "2023-03-01T01:16:46.463Z"
     },
     {
@@ -68,12 +68,12 @@
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Cơm_rang_thập_cẩm.jpg",
         "description": "Cơm rang thập cẩm",
-        "stock": 20,
+        "stock": -1,
         "createdAt": "2023-03-01T01:16:46.463Z"
     },
     {
         "name": "Coca",
-        "price": 10000,
+        "price": 15000,
         "type": "Nước uống",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Coca.jpg",
         "description": "Coca",
@@ -82,7 +82,7 @@
     },
     {
         "name": "Pepsi",
-        "price": 10000,
+        "price": 15000,
         "type": "Nước uống",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Pepsi.jpg",
         "description": "Pepsi",
@@ -91,7 +91,7 @@
     },
     {
         "name": "7up",
-        "price": 10000,
+        "price": 15000,
         "type": "Nước uống",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/7up.jpg",
         "description": "7up",
@@ -109,7 +109,7 @@
     },
     {
         "name": "Sting",
-        "price": 10000,
+        "price": 15000,
         "type": "Nước uống",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Sting.jpg",
         "description": "Sting",
@@ -118,7 +118,7 @@
     },
     {
         "name": "Redbull",
-        "price": 10000,
+        "price": 20000,
         "type": "Nước uống",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Redbull.jpg",
         "description": "Redbull",
@@ -167,34 +167,34 @@
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Phở.jpg",
         "description": "Phở",
-        "stock": 20,
+        "stock": -1,
         "createdAt": "2023-03-01T01:16:46.463Z"
     },
     {
         "name": "Cà phê",
-        "price": 30000,
+        "price": 15000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Cà_phê.jpg",
         "description": "Cà phê",
-        "stock": 20,
+        "stock": 0,
         "createdAt": "2023-03-01T01:16:46.463Z"
     },
     {
         "name": "Bánh mì trứng",
-        "price": 30000,
+        "price": 20000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Bánh_mì_trứng.jpg",
         "description": "Bánh mì trứng",
-        "stock": 20,
+        "stock": -1,
         "createdAt": "2023-03-01T01:16:46.463Z"
     },
     {
         "name": "Bánh mì thịt",
-        "price": 30000,
+        "price": 20000,
         "type": "Thức ăn",
         "image": "C:/Users/Laffy/Desktop/createProduct/images/Bánh_mì_thịt.jpg",
         "description": "Bánh mì thịt",
-        "stock": 20,
+        "stock": -1,
         "createdAt": "2023-03-01T01:16:46.463Z"
     }
 ]

@@ -29,9 +29,11 @@ export default function MainPage({}: IProps) {
         const handleSyncSuccess = (e: any, data: ISession) => {
             dispatch(
                 setAll({
-                    account: {
-                        ...account,
-                    },
+                    account: data.account
+                        ? {
+                              ...account,
+                          }
+                        : undefined,
                     remainingTime: data.totalTime ? data.totalTime - data.usedTime : undefined,
                     usedTime: data.usedTime,
                     usedCost: data.usedCost,

@@ -25,7 +25,7 @@ const initialState: UserState = {
     account: null,
     totalTime: 0,
     usedTime: 0,
-    remainingTime: 0,
+    remainingTime: 120,
     usedCost: 0,
     serviceCost: 0,
     balance: 0,
@@ -45,9 +45,10 @@ export const userSlice = createSlice({
                 (state as any)[key] = (action.payload as any)[key];
             }
             if (state.account) {
-                state.account.balance = action.payload.balance;
-                state.balance = action.payload.balance;
+                state.account.balance = action.payload.account.balance;
+                state.balance = action.payload.account.balance;
             }
+            state.remainingTime = state.totalTime - state.usedTime;
         },
         increaseUsedTime: (state) => {
             const gapTimeInSecond = 60;

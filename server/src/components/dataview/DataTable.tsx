@@ -20,9 +20,14 @@ interface IProps extends TableProps {
     headerProps?: TableHeadProps;
     rowProps?: TableRowProps;
     footer?: ReactNode;
+    onOpenRowContextMenu?: (rowIndex: number) => void;
 }
 
 export default function DataTable({ dataHeaders, dataRows, headerProps, rowProps, footer, ...rest }: IProps) {
+    function onOpenRowContextMenu(index: number): void {
+        throw new Error("Function not implemented.");
+    }
+
     return (
         <TableContainer>
             <Box overflowY={"auto"} height={"500px"} className="has-scrollbar">

@@ -66,12 +66,14 @@ export async function createMainWindow() {
             zoomFactor: 1.0,
         },
         autoHideMenuBar: true,
-        resizable: false,
+        minWidth: 1300,
+        minHeight: 800,
+        width: 1300,
+        height: 800,
     });
     //open dev tools
     win.webContents.openDevTools();
     global.win = win;
-    win.setSize(1300, 800);
     // set location center screen
     win.center();
     if (process.env.VITE_DEV_SERVER_URL) {

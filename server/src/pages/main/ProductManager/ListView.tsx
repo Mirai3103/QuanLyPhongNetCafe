@@ -86,7 +86,6 @@ export default function ListView() {
         }[]
     >([]);
     const [selectedType, setSelectedType] = React.useState<string | null>("all");
-    console.log(selectedType);
     const fileredProducts = React.useMemo(() => {
         if (selectedType === "all" || selectedType === null) {
             return products;
@@ -98,6 +97,8 @@ export default function ListView() {
         ipcRenderer.invoke("product:getAll").then((res) => {
             setProducts(res);
         });
+    }, []);
+    React.useEffect(() => {
         ipcRenderer.invoke("product:getAllType").then((res) => {
             const types = res.map((item: Type) => {
                 return {
@@ -114,7 +115,6 @@ export default function ListView() {
     }, []);
     React.useEffect(() => {
         const handleHasAChange = () => {
-            console.log("change");
             ipcRenderer.invoke("product:getAll").then((res) => {
                 setProducts(res);
             });

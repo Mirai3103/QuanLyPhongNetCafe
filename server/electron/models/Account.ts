@@ -10,7 +10,7 @@ import {
     BeforeUpdate,
     BeforeInsert,
 } from "typeorm";
-import MachineRevenue from "./MachineRevenue";
+import MachineUsage from "./MachineUsages";
 import Employee from "./Employee";
 import Session from "./Session";
 import Bill from "./Bill";
@@ -41,8 +41,6 @@ export default class Account {
     @Column({
         type: "varchar",
         length: 20,
-        enum: Role,
-        default: Role.User,
     })
     role: Role;
     @CreateDateColumn()
@@ -51,8 +49,8 @@ export default class Account {
     deletedAt: Date;
     @UpdateDateColumn()
     updatedAt: Date;
-    @OneToMany(() => MachineRevenue, (machineRevenue) => machineRevenue.account)
-    machineRevenues: MachineRevenue[];
+    @OneToMany(() => MachineUsage, (machineRevenue) => machineRevenue.account)
+    machineRevenues: MachineUsage[];
     @OneToOne(() => Employee, (employee) => employee.account)
     employee?: Employee;
     @Column({

@@ -8,7 +8,7 @@ import {
     OneToMany,
     OneToOne,
 } from "typeorm";
-import MachineRevenue from "./MachineRevenue";
+import MachineUsage from "./MachineUsages";
 import Session from "./Session";
 import Account from "./Account";
 import Bill from "./Bill";
@@ -36,31 +36,29 @@ export default class Machine {
     @Column({
         type: "varchar",
         length: 20,
-        enum: Status,
-        default: Status.Normal,
+        // default: Status.Normal,
     })
     status: Status;
-    @Column({
-        type: "varchar",
-        length: 20,
-        enum: MachineType,
-        default: MachineType.Normal,
-    })
-    type: MachineType;
     @Column({
         type: "int",
         default: 0,
         unsigned: true,
     })
     price: number;
+    @Column({
+        type: "varchar",
+        length: 20,
+        // default: MachineType.Normal,
+    })
+    type: MachineType;
     @CreateDateColumn()
     createdAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
     @UpdateDateColumn()
     updatedAt: Date;
-    @OneToMany(() => MachineRevenue, (machineRevenue) => machineRevenue.machine)
-    machineRevenues: MachineRevenue[];
+    @OneToMany(() => MachineUsage, (machineRevenue) => machineRevenue.machine)
+    machineRevenues: MachineUsage[];
     @OneToOne(() => Session, (session) => session.machine)
     session: Session;
     @OneToMany(() => Bill, (bill) => bill.machine)

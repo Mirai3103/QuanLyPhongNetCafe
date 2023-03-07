@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { AppDataSource } from "../models/db";
 import Machine, { Status } from "../models/Machine";
 import accountService from "./AccountService";
-import MachineRevenue, { PaymentType } from "./../models/MachineRevenue";
+import MachineUsage, { PaymentType } from "../models/MachineUsages";
 import { IAccount, Role } from "../models/Account";
 import sessionService from "./SessionService";
 import Session from "../models/Session";

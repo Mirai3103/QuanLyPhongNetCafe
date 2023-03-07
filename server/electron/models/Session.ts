@@ -1,7 +1,7 @@
 import { Entity, OneToOne, PrimaryGeneratedColumn, Column, JoinColumn } from "typeorm";
 import Account from "./Account";
 import Machine from "./Machine";
-import MachineRevenue, { PaymentType } from "./MachineRevenue";
+import MachineUsage, { PaymentType } from "./MachineUsages";
 
 @Entity()
 export default class Session {
@@ -43,25 +43,25 @@ export default class Session {
     @JoinColumn({ name: "machineId" })
     machine: Machine;
     @Column({
-        type: "datetime",
+        type: "timestamp",
     })
     expectedEndTime: Date;
     @Column({
-        type: "datetime",
+        type: "timestamp",
     })
     startTime: Date = new Date();
     @Column({
         nullable: true,
         type: "int",
     })
-    prePayment?: number;
+    PrepaidAmount?: number;
 
     public getRemaningTime() {
         return this.totalTime - this.usedTime;
     }
 
     public createRevenue() {
-        const machineRevenue = new MachineRevenue();
+        const machineRevenue = new MachineUsage();
         machineRevenue.account = this.account;
         machineRevenue.endAt = new Date();
         machineRevenue.startAt = this.startTime;

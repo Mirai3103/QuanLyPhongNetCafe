@@ -25,6 +25,7 @@ export default function EditAccount() {
                 id,
             })
             .then((data) => {
+                console.log(data);
                 setAccounts(data);
             });
     }, []);

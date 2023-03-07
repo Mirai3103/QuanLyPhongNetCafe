@@ -17,6 +17,7 @@ export default function CreateAccount() {
         password: "",
         username: "",
         role: Role.User,
+        initialBalance: 0,
     } as any);
     const user = useAppSelector(selectUser);
     const roleOptions = React.useMemo(() => {
@@ -27,12 +28,16 @@ export default function CreateAccount() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const name = e.target.name;
         const value = e.target.value;
+        if (name === "initialBalance") {
+            setAccounts((prev) => ({ ...prev!, balance: Number(value) }));
+        }
         setAccounts((prev) => ({ ...prev!, [name]: value }));
     };
     const handleRoleChange = (value: any) => {
         setAccounts((prev) => ({ ...prev!, role: value.value }));
     };
     const onClickSave = () => {
+        console.log(account);
         ipcRenderer.invoke(AccountEvents.REGISTER, account).then((data) => {
             if (data) {
                 navigate("/main/account-manager");
@@ -85,7 +90,7 @@ export default function CreateAccount() {
                             type={"number"}
                             placeholder="Số dư tài khoản"
                             value={account?.balance}
-                            name="balance"
+                            name="initialBalance"
                             onChange={handleChange}
                         />
                     </FormControl>

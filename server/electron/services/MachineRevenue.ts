@@ -1,18 +1,18 @@
 import { AppDataSource } from "../models/db";
 import Account, { Role } from "../models/Account";
 import Machine, { MachineType, Status } from "../models/Machine";
-import MachineRevenue, { PaymentType } from "../models/MachineRevenue";
+import MachineUsage, { PaymentType } from "../models/MachineUsages";
 import { BrowserWindow, ipcMain } from "electron";
 
- class MachineService {
-    async getMachineRevenueList() {
-        const machineRevenues = await AppDataSource.getRepository(MachineRevenue).find({
+class MachineService {
+    async getMachineUsageList() {
+        const machineRevenues = await AppDataSource.getRepository(MachineUsage).find({
             relations: ["machine", "account"],
         });
         return machineRevenues;
     }
-    async getMachineRevenueById(id: number) {
-        const machineRevenue = await AppDataSource.getRepository(MachineRevenue).findOne({
+    async getMachineUsageById(id: number) {
+        const machineRevenue = await AppDataSource.getRepository(MachineUsage).findOne({
             where: {
                 id,
             },
@@ -26,7 +26,7 @@ import { BrowserWindow, ipcMain } from "electron";
         paymentType: PaymentType | null,
         initialBalance: number | null
     ) {
-        const machineRevenue = new MachineRevenue();
+        const machineRevenue = new MachineUsage();
         const machine = await AppDataSource.getRepository(Machine).findOne({
             where: {
                 id: machineId,
@@ -52,7 +52,7 @@ import { BrowserWindow, ipcMain } from "electron";
                     machineRevenue.isEmployeeUsing = true;
                     machineRevenue.startAt = new Date();
                     machineRevenue.endAt = null;
-                    await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+                    await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
                     return {
                         status: true,
                         message: "",
@@ -79,7 +79,7 @@ import { BrowserWindow, ipcMain } from "electron";
             const totalSeconds = totalTime * 60 * 60;
             machineRevenue.endAt = new Date(new Date().getTime() + totalSeconds * 1000);
             // save to db
-            await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+            await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
             return {
                 status: true,
                 message: "",
@@ -103,7 +103,7 @@ import { BrowserWindow, ipcMain } from "electron";
             const totalTime = initialBalance / machine.price; // per hour
             const totalSeconds = totalTime * 60 * 60;
             machineRevenue.endAt = new Date(new Date().getTime() + totalSeconds * 1000);
-            await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+            await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
             return {
                 status: true,
                 message: "",
@@ -113,7 +113,7 @@ import { BrowserWindow, ipcMain } from "electron";
             machineRevenue.startAt = new Date();
             machineRevenue.endAt = null;
             // save to db
-            await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+            await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
             return {
                 status: true,
                 message: "",
@@ -122,7 +122,7 @@ import { BrowserWindow, ipcMain } from "electron";
         }
     }
     async endSession(machineRevenueId: number) {
-        const machineRevenue = await AppDataSource.getRepository(MachineRevenue).findOne({
+        const machineRevenue = await AppDataSource.getRepository(MachineUsage).findOne({
             where: {
                 id: machineRevenueId,
             },
@@ -141,7 +141,7 @@ import { BrowserWindow, ipcMain } from "electron";
             };
         }
         machineRevenue.endAt = new Date();
-        await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+        await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
         if (machineRevenue.paymentType === PaymentType.PostPayment) {
             const time = machineRevenue.endAt.getTime() - machineRevenue.startAt.getTime();
             const totalTime = time / 1000 / 60 / 60;
@@ -160,7 +160,7 @@ import { BrowserWindow, ipcMain } from "electron";
         };
     }
     async recharge(machineRevenueId: number, money: number) {
-        const machineRevenue = await AppDataSource.getRepository(MachineRevenue).findOne({
+        const machineRevenue = await AppDataSource.getRepository(MachineUsage).findOne({
             where: {
                 id: machineRevenueId,
             },
@@ -186,7 +186,7 @@ import { BrowserWindow, ipcMain } from "electron";
         }
         const time = (money / machineRevenue.machine.price) * 60 * 60 * 1000;
         machineRevenue.endAt = new Date(new Date().getTime() + time);
-        await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+        await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
         return {
             status: true,
             message: "",

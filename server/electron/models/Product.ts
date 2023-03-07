@@ -7,7 +7,7 @@ import {
     UpdateDateColumn,
     OneToMany,
 } from "typeorm";
-import ReceiptDetail from "./ReceiptDetail";
+import BillDetail from "./BillDetail";
 
 export enum Type {
     Drink = "Nước uống",
@@ -38,7 +38,7 @@ export default class Product {
     type: Type;
 
     @Column({
-        type: "text",
+        type: "longtext",
         nullable: true,
     })
     imageBase64: string;
@@ -50,15 +50,14 @@ export default class Product {
     @Column({
         type: "int",
         default: 0,
-        unsigned: true,
     })
     stock: number;
     @CreateDateColumn()
     createdAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
-    @OneToMany(() => ReceiptDetail, (receiptDetail) => receiptDetail.product)
-    receiptDetails: ReceiptDetail[];
+    @OneToMany(() => BillDetail, (billDetail) => billDetail.product)
+    billDetails: BillDetail[];
 }
 
 //only fields

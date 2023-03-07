@@ -27,6 +27,7 @@ const LinkItems: Array<LinkItemProps> = [
             { name: "Quản lý tài khoản", icon: FiTrendingUp, url: "/main/account-manager" },
             { name: "Quản lý máy", icon: FiTrendingUp, url: "/main/machine-manager" },
             { name: "Quản lý sản phẩm", icon: FiTrendingUp, url: "/main/product-manager" },
+            { name: "Quản lý hóa đơn", icon: FiTrendingUp, url: "/main/invoice-manager" },
         ],
     },
     { name: "Thống kê", icon: FiCompass },

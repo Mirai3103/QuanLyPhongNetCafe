@@ -72,7 +72,7 @@ class AccountController {
     }
     async register(event: Electron.IpcMainInvokeEvent, arg: any) {
         const win = global.win as BrowserWindow;
-        const account = await accountService.register(arg.username, arg.password, arg.balance);
+        const account = await accountService.register(arg.username, arg.password, arg.role, arg.initialBalance);
         if (!account) {
             win.webContents.send("error", "Tên đăng nhập đã tồn tại");
             return null;
@@ -100,7 +100,7 @@ class AccountController {
         return getUser();
     }
     async getAUserDetail(event: Electron.IpcMainInvokeEvent, arg: any) {
-        const account = await accountService.getAccountByUsername(arg.id);
+        const account = await accountService.getAccountInfo(arg.id);
         return account;
     }
 }

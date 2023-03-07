@@ -12,15 +12,15 @@ import {
     BeforeInsert,
 } from "typeorm";
 import Account, { Role } from "./Account";
-import Receipt from "./Receipt";
 import { DataSource } from "typeorm";
+import Bill from "./Bill";
 
 @Entity()
 export default class Employee {
     @PrimaryGeneratedColumn()
     id: number;
     @Column({
-        type: "nvarchar",
+        type: "varchar",
         length: 100,
     })
     name: string;
@@ -42,8 +42,8 @@ export default class Employee {
     @OneToOne(() => Account, (account) => account.employee)
     @JoinColumn({ name: "accountId" })
     account: Account;
-    @OneToMany(() => Receipt, (receipt) => receipt.employee)
-    receipts: Receipt[];
+    @OneToMany(() => Bill, (bill) => bill.employee)
+    bills: Bill[];
 }
 
 export type IEmployee = Employee;

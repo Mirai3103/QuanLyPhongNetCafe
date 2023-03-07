@@ -1,5 +1,5 @@
 import Account from "../models/Account";
-import MachineRevenue from "../models/MachineRevenue";
+import MachineUsage from "../models/MachineUsages";
 import { AppDataSource } from "../models/db/index";
 import Session from "../models/Session";
 import Machine from "../models/Machine";
@@ -42,7 +42,7 @@ class SessionService {
             return;
         }
         const machineRevenue = session.createRevenue();
-        await AppDataSource.getRepository(MachineRevenue).save(machineRevenue);
+        await AppDataSource.getRepository(MachineUsage).save(machineRevenue);
         await AppDataSource.getRepository(Session).delete(session.id);
     }
     public async renewData(accountId: number) {
@@ -86,7 +86,7 @@ class SessionService {
         }
         const amountTime = (amount / session.machine.price) * 60 * 60;
         session.totalTime += amountTime;
-        session.prePayment += amount;
+        session.PrepaidAmount += amount;
         await AppDataSource.getRepository(Session).save(session);
     }
     public async getSessionByAccountId(accountId: number) {
@@ -114,7 +114,7 @@ class SessionService {
         }
         const session = new Session();
         session.machine = machine;
-        session.prePayment = amount;
+        session.PrepaidAmount = amount;
         session.totalTime = (amount / machine.price) * 60 * 60; //seconds
         session.startTime = new Date();
         session.expectedEndTime = new Date(new Date().getTime() + session.totalTime * 1000);
@@ -138,7 +138,7 @@ class SessionService {
         const session = new Session();
         session.machine = machine;
         session.startTime = new Date();
-        session.prePayment = null;
+        session.PrepaidAmount = null;
         session.totalTime = null;
         session.account = null;
         await AppDataSource.getRepository(Session).save(session);

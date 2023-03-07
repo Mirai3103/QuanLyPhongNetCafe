@@ -1,10 +1,10 @@
 import { BrowserWindow } from "electron";
 import accountController from "./AccountController";
+import BillController from "./BillController";
 import machineController from "./MachineController";
 import ProductController from "./ProductController";
-import ReceiptController from "./ReceiptController";
 accountController.init();
 machineController.init();
 ProductController.init();
-ReceiptController.init();
+BillController.init();
 export {};

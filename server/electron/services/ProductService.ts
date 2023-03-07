@@ -57,10 +57,11 @@ class ProductService {
     }
     public async getProductCategories() {
         const products = await AppDataSource.getRepository(Product).find({
-            where: {
-                deletedAt: null,
+            select: {
+                type: true,
             },
         });
+        console.log(products);
         const categories = products.map((product) => product.type);
         const uniqueCategories = Array.from(new Set(categories));
         return uniqueCategories;
