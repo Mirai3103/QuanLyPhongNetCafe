@@ -37,7 +37,6 @@ class SessionService {
             },
             relations: ["account", "machine"],
         });
-        console.log(session);
         if (!session) {
             return;
         }

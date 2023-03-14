@@ -37,7 +37,6 @@ export default function CreateAccount() {
         setAccounts((prev) => ({ ...prev!, role: value.value }));
     };
     const onClickSave = () => {
-        console.log(account);
         ipcRenderer.invoke(AccountEvents.REGISTER, account).then((data) => {
             if (data) {
                 navigate("/main/account-manager");

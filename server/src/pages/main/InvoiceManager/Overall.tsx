@@ -17,33 +17,37 @@ export default function Overall() {
             setOverall(res);
         });
     }, []);
-    console.log(overall);
     if (!overall) return null;
 
     return (
         <Flex bg={"white"} shadow="lg" rounded={"xl"} p="2" justifyContent={"space-evenly"}>
             <OverallStatus
                 totalBill={overall?.total.length}
-                totalMoney={overall?.total.total}
+                totalMoney={`Lời: ` + toMoneyString(overall?.total.total)}
                 title={"Tổng"}
                 icon={RiBillFill}
                 scheme={"blue"}
             />
             <OverallStatus
-                totalBill={20}
-                totalMoney={1205.75}
-                title={"Thành công"}
+                totalBill={overall?.exportBill.length}
+                totalMoney={toMoneyString(overall?.exportBill.total)}
+                title={"Hoá đơn bán"}
                 icon={AiFillCheckCircle}
                 scheme={"green"}
             />
-            <OverallStatus totalBill={20} totalMoney={1205.75} title={"Đợi"} icon={IoTimeSharp} scheme={"yellow"} />
-
+            <OverallStatus
+                totalBill={overall?.importBill.length}
+                totalMoney={toMoneyString(overall?.importBill.total)}
+                title={"Hoá đơn nhập"}
+                icon={RiBillFill}
+                scheme={"gray"}
+            />
             <OverallStatus
                 totalBill={20}
                 totalMoney={1205.75}
-                title={"Huỷ"}
-                icon={AiFillCloseCircle}
-                scheme={"red"}
+                title={"Đợi giải quyết"}
+                icon={IoTimeSharp}
+                scheme={"yellow"}
                 border={"none"}
             />
         </Flex>
@@ -52,7 +56,7 @@ export default function Overall() {
 
 interface Iprops extends FlexProps {
     totalBill: number;
-    totalMoney: number;
+    totalMoney: number | string;
     title: string;
     icon: React.FC;
     scheme: string;
@@ -107,7 +111,7 @@ function OverallStatus({ scheme = "blue", totalBill, totalMoney, title, icon, ..
                         <Text as={"span"}>{` `}hóa đơn</Text>
                     </Text>
                     <Text color={`${scheme}.500`} fontSize="sm">
-                        {toMoneyString(totalMoney)}
+                        {totalMoney}
                     </Text>
                 </Flex>
             </Flex>

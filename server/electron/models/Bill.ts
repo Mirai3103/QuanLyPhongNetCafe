@@ -61,8 +61,10 @@ export default class Bill {
     @OneToMany(() => BillDetail, (billDetail) => billDetail.bill)
     billDetails: BillDetail[];
     @ManyToOne(() => Account, (account) => account.bills)
+    @JoinColumn({ name: "accountId" })
     account: Account;
     @ManyToOne(() => Machine, (machine) => machine.bills)
+    @JoinColumn({ name: "machineId" })
     machine: Machine;
     @Column({
         type: "varchar",
@@ -71,6 +73,16 @@ export default class Bill {
         default: BillType.Export,
     })
     type: BillType;
+    @Column({
+        type: "int",
+        nullable: true,
+    })
+    accountId: number;
+    @Column({
+        type: "int",
+        nullable: true,
+    })
+    machineId: number;
 }
 
 export type IBill = {

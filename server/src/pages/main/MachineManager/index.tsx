@@ -18,7 +18,6 @@ export default function MachineManager({}: IProps) {
             setMachineList(m);
         });
     }, []);
-    console.log(machineList);
 
     if (machineList === null) {
         return (

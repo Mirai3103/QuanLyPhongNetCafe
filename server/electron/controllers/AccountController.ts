@@ -82,7 +82,6 @@ class AccountController {
     }
     async recharge(event: Electron.IpcMainInvokeEvent, arg: any) {
         const win = global.win as BrowserWindow;
-        console.log(arg);
         const result = await accountService.recharge(arg.id, arg.money);
         if (!result) {
             win.webContents.send("error", "Tài khoản không tồn tại");

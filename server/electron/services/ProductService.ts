@@ -61,10 +61,23 @@ class ProductService {
                 type: true,
             },
         });
-        console.log(products);
         const categories = products.map((product) => product.type);
         const uniqueCategories = Array.from(new Set(categories));
         return uniqueCategories;
+    }
+    public async getAllForSelect() {
+        const products = await AppDataSource.getRepository(Product).find({
+            where: {
+                deletedAt: null,
+            },
+            select: {
+                id: true,
+                name: true,
+                price: true,
+                stock: true,
+            },
+        });
+        return products;
     }
 }
 

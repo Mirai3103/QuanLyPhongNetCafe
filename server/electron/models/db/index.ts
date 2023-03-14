@@ -27,7 +27,7 @@ export const AppDataSource = new DataSource({
     port: 3306,
     synchronize: false,
     dropSchema: false,
-    logging: true,
+    logging: false,
     entities: [Account, Employee, Machine, MachineUsage, Product, , Session, Bill, BillDetail],
 });
 

@@ -3,6 +3,9 @@ import React from "react";
 import { Outlet } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Main from "@/pages/main";
+import ProductPage from "@/pages/Product";
+import ProductWindow from "@/pages/Product/ProductWindow";
+import CartPage from "@/pages/Product/Cart";
 
 const routes = createBrowserRouter([
     {
@@ -20,6 +23,20 @@ const routes = createBrowserRouter([
             {
                 path: "/main",
                 element: <Main />,
+            },
+            {
+                path: "/test",
+                element: <ProductWindow />,
+                children: [
+                    {
+                        path: "",
+                        element: <ProductPage />,
+                    },
+                    {
+                        path: "cart",
+                        element: <CartPage />,
+                    },
+                ],
             },
         ],
     },

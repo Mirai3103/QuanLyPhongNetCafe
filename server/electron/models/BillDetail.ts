@@ -39,10 +39,6 @@ export default class BillDetail {
     price: number;
     @CreateDateColumn()
     createdAt: Date;
-    @DeleteDateColumn()
-    deletedAt: Date;
-    @UpdateDateColumn()
-    updatedAt: Date;
     @OneToMany(() => Bill, (bill) => bill.billDetails)
     @JoinColumn({ name: "billId" })
     bill: Bill;

@@ -57,7 +57,7 @@ class RealtimeService {
             session.usedCost = 0;
             session.usedTime = 0;
             session.totalTime = totalTime;
-            session.prePayment = undefined;
+            session.PrepaidAmount = undefined;
 
             sessionService.addSession(session);
             socket.emit("login-success", {
@@ -75,10 +75,8 @@ class RealtimeService {
     }
 
     static async onsyncTime(socket: Socket, { usedTime }: any) {
-        console.log("sync-time", usedTime);
         const machineId = (socket as any).machineId;
         const session = await sessionService.getSessionByMachineId(machineId)!;
-        console.log(session);
         if (session.account && session.account.role === Role.User) {
             const gap = usedTime - session.usedTime;
             const machinePrice = session.machine!.price;

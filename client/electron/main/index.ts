@@ -50,7 +50,37 @@ async function createWindow() {
     });
 }
 
-app.whenReady().then(createWindow);
+async function createTestWindow() {
+    global.win = new BrowserWindow({
+        title: "Main window",
+        icon: join(process.env.PUBLIC, "favicon.ico"),
+        webPreferences: {
+            preload,
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        autoHideMenuBar: true,
+        minWidth: 1348,
+        minHeight: 800,
+        width: 1348,
+        height: 800,
+    });
+    if (process.env.VITE_DEV_SERVER_URL) {
+        global.win.loadURL(url + "/test");
+        global.win.webContents.openDevTools();
+    } else {
+        global.win.loadFile(indexHtml);
+    }
+    global.win.webContents.on("did-finish-load", () => {
+        global.win?.webContents.send("main-process-message", new Date().toLocaleString());
+    });
+    global.win.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith("https:")) shell.openExternal(url);
+        return { action: "deny" };
+    });
+}
+
+app.whenReady().then(createTestWindow);
 
 app.on("window-all-closed", () => {
     global.win = null;

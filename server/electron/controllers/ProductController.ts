@@ -8,6 +8,7 @@ export enum ProductEvents {
     GET_ALL_PRODUCT = "product:getAll",
     GET_PRODUCT_BY_ID = "product:getById",
     GET_ALL_PRODUCT_TYPE = "product:getAllType",
+    GET_ALL_FOR_SELECT = "product:getAllForSelect",
 }
 
 class ProductController {
@@ -18,6 +19,7 @@ class ProductController {
         ipcMain.handle(ProductEvents.GET_ALL_PRODUCT, this.getAll);
         ipcMain.handle(ProductEvents.GET_PRODUCT_BY_ID, this.getById);
         ipcMain.handle(ProductEvents.GET_ALL_PRODUCT_TYPE, this.getAllType);
+        ipcMain.handle(ProductEvents.GET_ALL_FOR_SELECT, this.getAllForSelect);
     }
     async getAll(event: Electron.IpcMainInvokeEvent, arg: any) {
         const win: BrowserWindow = global.win;
@@ -82,6 +84,15 @@ class ProductController {
             return null;
         }
         return productTypes;
+    }
+    async getAllForSelect(event: Electron.IpcMainInvokeEvent, arg: any) {
+        const win: BrowserWindow = global.win;
+        const products = await productService.getAllForSelect();
+        if (!products) {
+            win.webContents.send("error", "Không có dữ liệu");
+            return null;
+        }
+        return products;
     }
 }
 

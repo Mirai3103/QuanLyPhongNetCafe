@@ -1,6 +1,6 @@
 import { AppDataSource } from "../models/db";
 import Employee from "../models/Employee";
-import Bill, { BillStatus, IBill } from "../models/Bill";
+import Bill, { BillStatus, BillType, IBill } from "../models/Bill";
 import BillDetail, { IBillDetail } from "../models/BillDetail";
 import Product from "../models/Product";
 class BillService {
@@ -10,6 +10,9 @@ class BillService {
                 account: true,
                 machine: true,
                 employee: true,
+            },
+            order: {
+                createdAt: "DESC",
             },
         });
         return bills;
@@ -23,17 +26,39 @@ class BillService {
                 account: true,
                 machine: true,
                 employee: true,
+                billDetails: false,
             },
         });
-        const billDetails = await AppDataSource.getRepository(BillDetail).find({
+        let billDetails = await AppDataSource.getRepository(BillDetail).find({
             where: {
                 billId: id,
             },
-            relations: {
-                product: true,
+            select: {
+                billId: true,
+                price: true,
+                productId: true,
+                quantity: true,
             },
         });
+        billDetails = await Promise.all(
+            billDetails.map(async (billDetail) => {
+                const product = await AppDataSource.getRepository(Product).findOne({
+                    where: {
+                        id: billDetail.productId,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        price: true,
+                    },
+                });
+                billDetail.product = product;
+                return billDetail;
+            })
+        );
+
         bill.billDetails = billDetails;
+
         return bill;
     }
     public async createBill(bill: IBill, billDetails: IBillDetail[]) {
@@ -41,30 +66,22 @@ class BillService {
         newBill.total = bill.total;
         newBill.status = bill.status;
         newBill.isPaid = bill.isPaid;
-        newBill.account = bill.account;
-        newBill.machine = bill.machine;
+        newBill.accountId = bill.accountId;
+        newBill.machineId = bill.machineId;
         newBill.createdAt = new Date();
         newBill.createdBy = bill.createdBy;
+        newBill.total = bill.total;
+
         newBill = await AppDataSource.getRepository(Bill).save(newBill);
-        let total = 0;
         for await (const billDetail of billDetails) {
-            billDetail.billId = newBill.id;
-            const product = await AppDataSource.getRepository(Product).findOne({
-                where: {
-                    id: billDetail.productId,
-                },
-                select: {
-                    price: true,
-                    stock: true,
-                    id: true,
-                },
-            });
-            total += product.price * billDetail.quantity;
-            await AppDataSource.getRepository(BillDetail).save(billDetail);
+            const newBillDetail = new BillDetail();
+            newBillDetail.billId = newBill.id;
+            newBillDetail.productId = billDetail.productId;
+            newBillDetail.quantity = billDetail.quantity;
+            newBillDetail.price = billDetail.price;
+            await AppDataSource.getRepository(BillDetail).save(newBillDetail);
         }
-        newBill.total = total;
-        newBill = await AppDataSource.getRepository(Bill).save(newBill);
-        return newBill;
+        return true;
     }
     public async deleteBill(id: number) {
         const bill = await AppDataSource.getRepository(Bill).findOne({
@@ -87,21 +104,17 @@ class BillService {
         });
         const total = {
             length: bills.length,
-            total: bills.reduce((total, bill) => total + bill.total, 0),
+            total:
+                bills.filter((bill) => bill.type == BillType.Export).reduce((total, bill) => total + bill.total, 0) -
+                bills.filter((bill) => bill.type == BillType.Import).reduce((total, bill) => total + bill.total, 0),
         };
-        const paid = {
-            length: bills.filter((bill) => bill.isPaid).length,
-            total: bills.filter((bill) => bill.isPaid).reduce((total, bill) => total + bill.total, 0),
+        const exportBill = {
+            length: bills.filter((bill) => bill.type == BillType.Export).length,
+            total: bills.filter((bill) => bill.type == BillType.Export).reduce((total, bill) => total + bill.total, 0),
         };
-        const unpaid = {
-            length: bills.filter((bill) => !bill.isPaid).length,
-            total: bills.filter((bill) => !bill.isPaid).reduce((total, bill) => total + bill.total, 0),
-        };
-        const rejected = {
-            length: bills.filter((bill) => bill.status == BillStatus.Rejected).length,
-            total: bills
-                .filter((bill) => bill.status == BillStatus.Rejected)
-                .reduce((total, bill) => total + bill.total, 0),
+        const importBill = {
+            length: bills.filter((bill) => bill.type == BillType.Import).length,
+            total: bills.filter((bill) => bill.type == BillType.Import).reduce((total, bill) => total + bill.total, 0),
         };
         const pending = {
             length: bills.filter((bill) => bill.status == BillStatus.Pending).length,
@@ -109,19 +122,11 @@ class BillService {
                 .filter((bill) => bill.status == BillStatus.Pending)
                 .reduce((total, bill) => total + bill.total, 0),
         };
-        const accepted = {
-            length: bills.filter((bill) => bill.status == BillStatus.Accepted).length,
-            total: bills
-                .filter((bill) => bill.status == BillStatus.Accepted)
-                .reduce((total, bill) => total + bill.total, 0),
-        };
         return {
             total,
-            paid,
-            unpaid,
-            rejected,
+            exportBill,
+            importBill,
             pending,
-            accepted,
         };
     }
 }

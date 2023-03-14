@@ -64,3 +64,16 @@ export default class Product {
 export type IProduct = {
     [key in keyof Product]: Product[key] extends Function ? never : Product[key];
 };
+
+const fakeData: IProduct = {
+    id: 1,
+    name: "Coca",
+    price: 10000,
+    type: Type.Drink,
+    imageBase64: "https://th.bing.com/th/id/OIP.gOSWD16OMZ6vAMmKT8ltUwHaHa?pid=ImgDet&rs=1",
+    description: "Coca",
+    stock: 100,
+    createdAt: new Date("2022-02-12 00:00:00"),
+    deletedAt: null,
+    billDetails: null,
+};

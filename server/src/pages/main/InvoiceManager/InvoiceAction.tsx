@@ -41,16 +41,16 @@ const StyledMenuItem = MenuItemLink;
 export default function InvoiceAction({ id }: IProps) {
     const [isOpenDelete, setIsOpenDelete] = React.useState(false);
     const onDelete = () => {
-        // ipcRenderer
-        //     .invoke("account:deleteAccount", {
-        //         id,
-        //     })
-        //     .then((res) => {
-        //         if (res) {
-        //             const event = new CustomEvent("refresh-invoice");
-        //             window.dispatchEvent(event);
-        //         }
-        //     });
+        ipcRenderer
+            .invoke("BILL:delete", {
+                id,
+            })
+            .then((res) => {
+                if (res) {
+                    const event = new CustomEvent("refresh-invoice");
+                    window.dispatchEvent(event);
+                }
+            });
     };
 
     return (
@@ -72,7 +72,7 @@ export default function InvoiceAction({ id }: IProps) {
                     icon={<BsThreeDotsVertical className="text-lg" />}
                 ></MenuButton>
                 <MenuList>
-                    <StyledMenuItem as={Link} to={`/main/account-manager/edit/${id}`}>
+                    <StyledMenuItem as={Link} to={`/main/invoice-manager/edit/${id}`}>
                         <AiOutlineEdit />
                         Sửa thông tin
                     </StyledMenuItem>

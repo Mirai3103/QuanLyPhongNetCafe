@@ -25,7 +25,7 @@ export default function InvoiceManager() {
                             />
                         }
                         variant="solid"
-                        // onClick={() => navigate("-1")}
+                        onClick={() => navigate("/main/invoice-manager/create")}
                     >
                         Tạo hoá đơn
                     </Button>

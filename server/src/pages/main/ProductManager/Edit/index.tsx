@@ -46,7 +46,6 @@ export default function EditProduct() {
             setType(types);
         });
         ipcRenderer.invoke("product:getById", { id }).then((data) => {
-            console.log(data);
             setProduct(data);
             nameRef.current!.value = data.name;
             priceRef.current!.value = data.price + "";
@@ -103,10 +102,10 @@ export default function EditProduct() {
                     <div className="text-3xl cursor-pointer hover:text-blue-500 hover:bg-slate-100 mx-4 px-4 py-2 rounded-md">
                         <MdArrowBack onClick={() => navigate(-1)} />
                     </div>
-                    <Flex fontSize={"2xl"}>Tạo sản phẩm</Flex>
+                    <Flex fontSize={"2xl"}>Sửa sản phẩm</Flex>
                 </Flex>
                 <Button colorScheme={"green"} size="md" px={"12"} onClick={handleCreate}>
-                    Tạo
+                    Lưu
                 </Button>
             </div>
             <Flex bg={"white"} mx="2" p={"6"} mt="10" rounded={"xl"} shadow="xl">
